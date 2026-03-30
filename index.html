@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD | For My Favorite Human</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --pink-deep: #ff4d6d;
+            --pink-mid: #ff8fa3;
+            --pink-soft: #ffafbd;
+            --glass: rgba(255, 255, 255, 0.7);
+            --text-main: #2d3436;
+            --accent: #7d5fff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fff0f3;
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- BACKGROUND --- */
+        .bg-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #fff0f3 0%, #fce4ec 100%);
+            overflow: hidden;
+        }
+
+        .nebula {
+            position: absolute; width: 700px; height: 700px;
+            border-radius: 50%; filter: blur(100px); opacity: 0.3;
+            animation: drift 25s infinite alternate ease-in-out;
+        }
+        .nebula-1 { background: var(--pink-soft); top: -10%; left: -10%; }
+        .nebula-2 { background: #ffc3a0; bottom: -10%; right: -5%; animation-delay: -5s; }
+
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(100px, 50px) scale(1.3); }
+        }
+
+        .sparkle {
+            position: absolute; background: white; border-radius: 50%;
+            animation: twinkle var(--speed) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.8); opacity: 0.6; }
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 20px; transition: all 1s ease;
+        }
+        .hero.dimmed { opacity: 0.2; transform: scale(0.95); filter: blur(5px); }
+
+        .profile-wrap img {
+            width: 220px; height: 220px; border-radius: 50%;
+            object-fit: cover; border: 10px solid white;
+            box-shadow: 0 30px 60px rgba(255, 77, 109, 0.2);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 12vw, 6rem);
+            background: linear-gradient(to right, var(--pink-deep), #ff758c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1; margin: 20px 0;
+        }
+
+        /* --- SURPRISE BUTTON --- */
+        .btn-anchor {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%); z-index: 1000;
+        }
+
+        .cta-btn {
+            padding: 20px 50px; border-radius: 100px; border: none;
+            background: var(--pink-deep); color: white;
+            font-weight: 800; font-size: 1.1rem; cursor: pointer;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.4);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 12px;
+            letter-spacing: 1px;
+        }
+
+        .cta-btn:hover { transform: scale(1.08) translateY(-5px); }
+        .cta-btn.active { background: var(--text-main); }
+
+        /* --- GALLERY GRID --- */
+        .gallery {
+            max-width: 1000px; margin: 0 auto;
+            padding: 100px 25px; display: none; opacity: 0;
+        }
+        .gallery.active { display: block; opacity: 1; }
+
+        .memory-row {
+            display: flex; align-items: center; gap: 60px;
+            margin-bottom: 180px; opacity: 0;
+            transform: translateY(100px);
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .memory-row:nth-child(even) { flex-direction: row-reverse; }
+
+        .img-box { 
+            width: 380px; height: 500px; border-radius: 40px;
+            overflow: hidden; border: 15px solid white;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.12);
+            background: white; flex-shrink: 0;
+        }
+
+        .img-box img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 1s ease;
+        }
+
+        .memory-row:hover img { transform: scale(1.1); }
+
+        .txt-box { 
+            flex: 1; padding: 50px; 
+            background: var(--glass); backdrop-filter: blur(25px); 
+            border-radius: 40px; border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .txt-box h2 { 
+            font-family: 'Playfair Display', serif; font-size: 2.8rem; 
+            color: var(--pink-deep); margin-bottom: 15px; 
+        }
+
+        .txt-box p { font-size: 1.3rem; line-height: 1.7; font-style: italic; color: #444; }
+
+        /* --- FINAL CARD --- */
+        .final-card {
+            max-width: 850px; margin: 150px auto; padding: 100px 50px;
+            background: white; border-radius: 70px; text-align: center;
+            box-shadow: 0 50px 120px rgba(255, 77, 109, 0.2);
+            opacity: 0; transform: scale(0.85); transition: 1.5s ease;
+        }
+        .final-card.visible { opacity: 1; transform: scale(1); }
+
+        /* MOBILE FIXES */
+        @media (max-width: 900px) {
+            .memory-row, .memory-row:nth-child(even) { flex-direction: column; text-align: center; gap: 30px; }
+            .img-box { width: 100%; height: 400px; max-width: 450px; }
+            .txt-box { padding: 35px; width: 100%; }
+            .hero h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-container" id="bgScene">
+        <div class="nebula nebula-1"></div>
+        <div class="nebula nebula-2"></div>
+    </div>
+
+    <header class="hero" id="heroHeader">
+        <div class="profile-wrap">
+            <img src="photo1.jpeg" alt="Sis">
+        </div>
+        <p style="letter-spacing: 6px; opacity: 0.6; font-weight: 600;">A CELEBRATION OF YOU</p>
+        <h1>Happy Birthday,<br>Best Sis.</h1>
+    </header>
+
+    <div class="btn-anchor">
+        <button class="cta-btn" id="surpriseBtn">
+            <span id="btnLabel">REVEAL THE MAGIC</span> ✨
+        </button>
+    </div>
+
+    <main class="gallery" id="galleryArea">
+        
+        <div class="memory-row animate">
+            <div class="img-box"><img src="photo5.jpeg" alt="Adventure"></div>
+            <div class="txt-box">
+                <h2>Beyond the Horizon</h2>
+                <p>"To the girl who is always ready for the next adventure: May your new year be as grand as ancient monuments and as bright as the open sky. Keep making history in your own beautiful way."</p>
+            </div>
+        </div>
+
+        <div class="memory-row animate">
+            <div class="img-box"><img src="photo3.jpeg" alt="Kindness"></div>
+            <div class="txt-box">
+                <h2>Purest Heart</h2>
+                <p>"Seeing you here shows exactly why you're so special. You have a heart big enough to care for everyone, and a way of making every soul feel safe and loved. You are a true blessing."</p>
+            </div>
+        </div>
+
+        <div class="memory-row animate">
+            <div class="img-box" style="background: #fff;">
+                <img src="photo6.jpeg" alt="Bond" style="object-fit: contain; padding: 25px;">
+            </div>
+            <div class="txt-box">
+                <h2>The Forever Bond</h2>
+                <p>"You've been my safety net since day one. No matter how big the world gets, I never feel lost because I know you're just a call away. Thank you for protecting my dreams as much as your own."</p>
+            </div>
+        </div>
+
+        <div class="memory-row animate">
+            <div class="img-box"><img src="photo4.jpeg" alt="Comedy"></div>
+            <div class="txt-box">
+                <h2>Resident Cartoon</h2>
+                <p>"Every family has one character who keeps the house alive! Whether you're plotting world domination or just making faces, life with you is a 24/7 comedy show. Stay weird!"</p>
+            </div>
+        </div>
+
+        <section class="final-card animate" id="finalCard">
+            <h2 style="font-size: 3.5rem; margin-bottom: 30px;">A Divine Gift</h2>
+            <p style="font-size: 1.5rem; line-height: 1.9; color: #555;">"Before I even entered this world, God knew I’d need a guide, a protector, and a best friend—so He gave me you. You were the greatest gift waiting for me at the start of my journey, and you are my favorite person ever."</p>
+            <div style="margin-top: 50px; font-weight: 800; color: var(--pink-deep); letter-spacing: 4px; font-size: 1.2rem;">❤️ HAPPY BIRTHDAY TO MY FAVORITE CARTOON ❤️</div>
+        </section>
+    </main>
+
+    <script>
+        // Smooth Background Particles
+        const bg = document.getElementById('bgScene');
+        for(let i=0; i<50; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.top = Math.random() * 100 + 'vh';
+            const size = Math.random() * 4 + 2 + 'px';
+            sparkle.style.width = size; sparkle.style.height = size;
+            sparkle.style.setProperty('--speed', (Math.random() * 3 + 2) + 's');
+            bg.appendChild(sparkle);
+        }
+
+        const btn = document.getElementById('surpriseBtn');
+        const label = document.getElementById('btnLabel');
+        const gallery = document.getElementById('galleryArea');
+        const hero = document.getElementById('heroHeader');
+
+        let isRevealed = false;
+
+        btn.addEventListener('click', () => {
+            isRevealed = !isRevealed;
+            if (isRevealed) {
+                confetti({ particleCount: 200, spread: 80, origin: { y: 0.8 }, colors: ['#ff4d6d', '#ffffff', '#7d5fff'] });
+                gallery.style.display = 'block';
+                setTimeout(() => gallery.classList.add('active'), 10);
+                label.innerText = "CLOSE MEMORIES";
+                btn.classList.add('active');
+                hero.classList.add('dimmed');
+                setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 500);
+            } else {
+                gallery.classList.remove('active');
+                setTimeout(() => { gallery.style.display = 'none'; window.scrollTo({ top: 0, behavior: 'smooth' }); }, 800);
+                label.innerText = "REVEAL THE MAGIC";
+                btn.classList.remove('active');
+                hero.classList.remove('dimmed');
+            }
+        });
+
+        // Intersection Observer for the "Good UI" feel
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = entry.target.id === 'finalCard' ? "scale(1)" : "translateY(0)";
+                    if(entry.target.id === 'finalCard') entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
